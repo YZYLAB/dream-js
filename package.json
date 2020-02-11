@@ -1,6 +1,6 @@
 {
   "name": "@yzylab/dream-js",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "lib/dream.js",
   "scripts": {
