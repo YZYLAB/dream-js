@@ -9,6 +9,8 @@ Why?
 
 ![enter image description here](https://i.gyazo.com/086fcd2ebd679d82f78beef7484a70f6.png)
 
+Let me know if you find any bugs or issues.
+
 ### To install dependencies
 
 ```
