@@ -802,7 +802,7 @@ window.__nightmare = {}
 __nightmare.ipc = require('electron').ipcRenderer
 ```
 
-To benefit of all of nightmare's feedback from the browser, you can instead copy the contents of nightmare's [preload script](lib/preload.js).
+To benefit of all of nightmare's feedback from the browser, you can instead copy the contents of nightmare's [preload script](lib/preload.template.js).
 
 #### Storage Persistence between nightmare instances
 
