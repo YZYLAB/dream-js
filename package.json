@@ -1,0 +1,63 @@
+{
+  "name": "dream",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/dream.js",
+  "scripts": {
+    "build": "babel src -d build",
+    "test": "make test",
+    "precommit": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yzylab/dream.git"
+  },
+  "author": "YZYLAB",
+  "keywords": [
+    "dream",
+    "electron"
+  ],
+  "description": "A high-level browser automation library. Based on Nightmare JS",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "deep-defaults": "^1.0.5",
+    "defaults": "^1.0.3",
+    "electron": "^8.0.0",
+    "enqueue": "^1.0.2",
+    "esm": "^3.2.25",
+    "function-source": "^0.1.0",
+    "jsesc": "^2.5.2",
+    "minstache": "^1.2.0",
+    "mkdirp": "^1.0.3",
+    "multiline": "^2.0.0",
+    "once": "^1.4.0",
+    "rimraf": "^3.0.2",
+    "sliced": "1.0.1",
+    "split2": "^3.1.1"
+  },
+  "devDependencies": {
+    "async": "~3.1.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "basic-auth": "^2.0.1",
+    "basic-auth-connect": "^1.0.0",
+    "bluebird": "^3.7.2",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "express": "4.17.1",
+    "husky": "^4.2.1",
+    "mocha": "^7.0.1",
+    "mocha-generators": "^2.0.0",
+    "multer": "1.4.2",
+    "pngjs": "^3.4.0",
+    "prettier": "1.19.1",
+    "serve-static": "^1.14.1",
+    "split": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
