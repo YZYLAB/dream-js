@@ -10,7 +10,7 @@ dream
     .evaluate(function(){
         return document.body.innerHTML;
     })
-    .wait(100000000000)
+    .wait(10000)
     .end()
     .then(function(result) {
         console.log(result)
