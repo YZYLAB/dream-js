@@ -1,4 +1,4 @@
-const Dream = require('./index').default
+const Dream = require('./index')
 const dream = new Dream({
     show: true,
     openDevTools: { detach: true }
