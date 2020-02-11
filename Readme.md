@@ -9,12 +9,12 @@ Why?
 
 ![enter image description here](https://i.gyazo.com/086fcd2ebd679d82f78beef7484a70f6.png)
 
-Let me know if you find any bugs or issues.
 
-### To install dependencies
+
+### Installation
 
 ```
-npm install
+npm install @yzylab/dream-js
 ```
 
 ### Node versions
@@ -32,7 +32,7 @@ Creates a new instance that can navigate around the web. The available options a
 Throws an exception if the `.wait()` didn't return `true` within the set timeframe.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   waitTimeout: 1000 // in ms
 })
 ```
@@ -42,7 +42,7 @@ const dream = new Dream({
 Throws an exception if the `.goto()` didn't finish loading within the set timeframe. Note that, even though `goto` normally waits for all the resources on a page to load, a timeout exception is only raised if the DOM itself has not yet loaded.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   gotoTimeout: 1000 // in ms
 })
 ```
@@ -52,7 +52,7 @@ const dream = new Dream({
 Forces Dream to move on if a page transition caused by an action (eg, `.click()`) didn't finish within the set timeframe. If `loadTimeout` is shorter than `gotoTimeout`, the exceptions thrown by `gotoTimeout` will be suppressed.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   loadTimeout: 1000 // in ms
 })
 ```
@@ -62,7 +62,7 @@ const dream = new Dream({
 The maximum amount of time to wait for an `.evaluate()` statement to complete.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   executionTimeout: 1000 // in ms
 })
 ```
@@ -74,7 +74,7 @@ The default system paths that Electron knows about. Here's a list of available p
 You can overwrite them in Dream by doing the following:
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   paths: {
     userData: '/user/data'
   }
@@ -87,7 +87,7 @@ The command line switches used by the Chrome browser that are also supported by 
 https://github.com/atom/electron/blob/master/docs/api/chrome-command-line-switches.md
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   switches: {
     'proxy-server': '1.2.3.4:5678',
     'ignore-certificate-errors': true
@@ -100,7 +100,7 @@ const dream = new Dream({
 The path to the prebuilt Electron binary. This is useful for testing on different versions of Electron. Note that Dream only supports the version on which this package depends. Use this option at your own risk.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   electronPath: require('electron')
 })
 ```
@@ -110,7 +110,7 @@ const dream = new Dream({
 A boolean to optionally show the Electron icon in the dock (defaults to `false`). This is useful for testing purposes.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   dock: true
 })
 ```
@@ -120,7 +120,7 @@ const dream = new Dream({
 Optionally shows the DevTools in the Electron window using `true`, or use an object hash containing `mode: 'detach'` to show in a separate window. The hash gets passed to [`contents.openDevTools()`](https://github.com/electron/electron/blob/master/docs/api/web-contents.md#contentsopendevtoolsoptions) to be handled. This is also useful for testing purposes. Note that this option is honored only if `show` is set to `true`.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   openDevTools: {
     mode: 'detach'
   },
@@ -133,7 +133,7 @@ const dream = new Dream({
 How long to wait between keystrokes when using `.type()`.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   typeInterval: 20
 })
 ```
@@ -143,7 +143,7 @@ const dream = new Dream({
 How long to wait between checks for the `.wait()` condition to be successful.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   pollInterval: 50 //in ms
 })
 ```
@@ -153,7 +153,7 @@ const dream = new Dream({
 Defines the number of times to retry an authentication when set up with `.authenticate()`.
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   maxAuthRetries: 3
 })
 ```
@@ -163,7 +163,7 @@ const dream = new Dream({
 A string to determine the client certificate selected by electron. If this options is set, the [`select-client-certificate`](https://github.com/electron/electron/blob/master/docs/api/app.md#event-select-client-certificate) event will be set to loop through the certificateList and find the first certificate that matches `subjectName` on the electron [`Certificate Object`](https://electronjs.org/docs/api/structures/certificate).
 
 ```js
-const dream = new Dream({
+const dream = Dream({
   certificateSubjectName: 'tester'
 })
 ```
@@ -699,7 +699,7 @@ can specify a custom preload script. Here's how you do that:
 ```js
 import path from 'path'
 
-const dream = new Dream({
+const dream = Dream({
   webPreferences: {
     preload: path.resolve('custom-script.js')
     //alternative: preload: "absolute/path/to/custom-script.js"
@@ -761,7 +761,7 @@ Dream is a node module that can be used in a Node.js script or module. Here's a 
 ```js
 import Dream from 'dream';
 
-const dream = new Dream();
+const dream = Dream();
 
 dream.goto('http://cnn.com')
   .evaluate(() => {
