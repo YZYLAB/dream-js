@@ -1,97 +1,13 @@
-[![Build Status](https://img.shields.io/circleci/project/segmentio/nightmare/master.svg)](https://circleci.com/gh/segmentio/nightmare)
-[![Join the chat at https://gitter.im/rosshinkley/nightmare](https://badges.gitter.im/rosshinkley/nightmare.svg)](https://gitter.im/rosshinkley/nightmare?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 # Dream
+DreamJS is a high-level browser automation library based on Nightmare from [Segment](https://segment.com). 
 
-Dream is a high-level browser automation library from [Segment](https://segment.com).
+Why?
+ - Harder to detect since it doesn't set the window.__nightmare value but instead changes the variable name on every run and it uses scripts from [[Puppeteer Extra Plugin Stealth ](https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/)]
+ - Code has been converted to ES6
+ - Puppeteer is great but it's sometimes a bit slower than Electron (which is what Dream uses).
+ - I have used this myself for a while and I thought why not release it.
 
-The goal is to expose a few simple methods that mimic user actions (like `goto`, `type` and `click`), with an API that feels synchronous for each block of scripting, rather than deeply nested callbacks. It was originally designed for automating tasks across sites that don't have APIs, but is most often used for UI testing and crawling.
-
-Under the covers it uses [Electron](http://electron.atom.io/), which is similar to [PhantomJS](http://phantomjs.org/) but roughly [twice as fast](https://github.com/segmentio/nightmare/issues/484#issuecomment-184519591) and more modern. 
-
-**⚠️ Security Warning:** We've implemented [many](https://github.com/segmentio/nightmare/issues/1388) of the security recommendations [outlined by Electron](https://github.com/electron/electron/blob/master/docs/tutorial/security.md) to try and keep you safe, but undiscovered vulnerabilities may exist in Electron that could allow a malicious website to execute code on your computer. Avoid visiting untrusted websites.
-
-**🛠 Migrating to 3.x:** You'll want to check out [this issue](https://github.com/segmentio/nightmare/issues/1396) before upgrading. We've worked hard to make improvements to nightmare while limiting the breaking changes and there's a good chance you won't need to do anything.
-
-[Niffy](https://github.com/segmentio/niffy) is a perceptual diffing tool built on Dream. It helps you detect UI changes and bugs across releases of your web app.
-
-[Daydream](https://github.com/segmentio/daydream) is a complementary chrome extension built by [@stevenmiller888](https://github.com/stevenmiller888) that generates Dream scripts for you while you browse.
-
-Many thanks to [@matthewmueller](https://github.com/matthewmueller) and [@rosshinkley](https://github.com/rosshinkley) for their help on Dream.
-
-* [Examples](#examples)
-  * [UI Testing Quick Start](https://segment.com/blog/ui-testing-with-nightmare/)
-  * [Perceptual Diffing with Niffy & Dream](https://segment.com/blog/perceptual-diffing-with-niffy/)
-* [API](#api)
-  * [Set up an instance](#nightmareoptions)
-  * [Interact with the page](#interact-with-the-page)
-  * [Extract from the page](#extract-from-the-page)
-  * [Cookies](#cookies)
-  * [Proxies](#proxies)
-  * [Promises](#promises)
-  * [Extending Dream](#extending-nightmare)
-* [Usage](#usage)
-* [Debugging](#debugging)
-* [Additional Resources](#additional-resources)
-
-## Examples
-
-Let's search on DuckDuckGo:
-
-```js
-const Dream = require('nightmare')
-const nightmare = Dream({ show: true })
-
-nightmare
-  .goto('https://duckduckgo.com')
-  .type('#search_form_input_homepage', 'github nightmare')
-  .click('#search_button_homepage')
-  .wait('#r1-0 a.result__a')
-  .evaluate(() => document.querySelector('#r1-0 a.result__a').href)
-  .end()
-  .then(console.log)
-  .catch(error => {
-    console.error('Search failed:', error)
-  })
-```
-
-You can run this with:
-
-```shell
-npm install --save nightmare
-node example.js
-```
-
-Or, let's run some mocha tests:
-
-```js
-const Dream = require('nightmare')
-const chai = require('chai')
-const expect = chai.expect
-
-describe('test duckduckgo search results', () => {
-  it('should find the nightmare github link first', function(done) {
-    this.timeout('10s')
-
-    const nightmare = Dream()
-    nightmare
-      .goto('https://duckduckgo.com')
-      .type('#search_form_input_homepage', 'github nightmare')
-      .click('#search_button_homepage')
-      .wait('#links .result__a')
-      .evaluate(() => document.querySelector('#links .result__a').href)
-      .end()
-      .then(link => {
-        expect(link).to.equal('https://github.com/segmentio/nightmare')
-        done()
-      })
-  })
-})
-```
-
-You can see examples of every function [in the tests here](https://github.com/segmentio/nightmare/blob/master/test/index.js).
-
-To get started with UI Testing, check out this [quick start guide](https://segment.com/blog/ui-testing-with-nightmare).
+![enter image description here](https://i.gyazo.com/086fcd2ebd679d82f78beef7484a70f6.png)
 
 ### To install dependencies
 
@@ -99,28 +15,22 @@ To get started with UI Testing, check out this [quick start guide](https://segme
 npm install
 ```
 
-### To run the mocha tests
-
-```
-npm test
-```
-
 ### Node versions
 
-Dream is intended to be run on NodeJS 4.x or higher.
+Dream is intended to be run on NodeJS 8.x or higher.
 
 ## API
 
 #### Dream(options)
 
-Creates a new instance that can navigate around the web. The available options are [documented here](https://github.com/atom/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions), along with the following nightmare-specific options.
+Creates a new instance that can navigate around the web. The available options are [documented here](https://github.com/atom/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions), along with the following dream-specific options.
 
 ##### waitTimeout (default: 30s)
 
 Throws an exception if the `.wait()` didn't return `true` within the set timeframe.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   waitTimeout: 1000 // in ms
 })
 ```
@@ -130,7 +40,7 @@ const nightmare = Dream({
 Throws an exception if the `.goto()` didn't finish loading within the set timeframe. Note that, even though `goto` normally waits for all the resources on a page to load, a timeout exception is only raised if the DOM itself has not yet loaded.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   gotoTimeout: 1000 // in ms
 })
 ```
@@ -140,7 +50,7 @@ const nightmare = Dream({
 Forces Dream to move on if a page transition caused by an action (eg, `.click()`) didn't finish within the set timeframe. If `loadTimeout` is shorter than `gotoTimeout`, the exceptions thrown by `gotoTimeout` will be suppressed.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   loadTimeout: 1000 // in ms
 })
 ```
@@ -150,7 +60,7 @@ const nightmare = Dream({
 The maximum amount of time to wait for an `.evaluate()` statement to complete.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   executionTimeout: 1000 // in ms
 })
 ```
@@ -162,7 +72,7 @@ The default system paths that Electron knows about. Here's a list of available p
 You can overwrite them in Dream by doing the following:
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   paths: {
     userData: '/user/data'
   }
@@ -175,7 +85,7 @@ The command line switches used by the Chrome browser that are also supported by 
 https://github.com/atom/electron/blob/master/docs/api/chrome-command-line-switches.md
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   switches: {
     'proxy-server': '1.2.3.4:5678',
     'ignore-certificate-errors': true
@@ -188,7 +98,7 @@ const nightmare = Dream({
 The path to the prebuilt Electron binary. This is useful for testing on different versions of Electron. Note that Dream only supports the version on which this package depends. Use this option at your own risk.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   electronPath: require('electron')
 })
 ```
@@ -198,7 +108,7 @@ const nightmare = Dream({
 A boolean to optionally show the Electron icon in the dock (defaults to `false`). This is useful for testing purposes.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   dock: true
 })
 ```
@@ -208,7 +118,7 @@ const nightmare = Dream({
 Optionally shows the DevTools in the Electron window using `true`, or use an object hash containing `mode: 'detach'` to show in a separate window. The hash gets passed to [`contents.openDevTools()`](https://github.com/electron/electron/blob/master/docs/api/web-contents.md#contentsopendevtoolsoptions) to be handled. This is also useful for testing purposes. Note that this option is honored only if `show` is set to `true`.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   openDevTools: {
     mode: 'detach'
   },
@@ -221,7 +131,7 @@ const nightmare = Dream({
 How long to wait between keystrokes when using `.type()`.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   typeInterval: 20
 })
 ```
@@ -231,7 +141,7 @@ const nightmare = Dream({
 How long to wait between checks for the `.wait()` condition to be successful.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   pollInterval: 50 //in ms
 })
 ```
@@ -241,7 +151,7 @@ const nightmare = Dream({
 Defines the number of times to retry an authentication when set up with `.authenticate()`.
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   maxAuthRetries: 3
 })
 ```
@@ -251,7 +161,7 @@ const nightmare = Dream({
 A string to determine the client certificate selected by electron. If this options is set, the [`select-client-certificate`](https://github.com/electron/electron/blob/master/docs/api/app.md#event-select-client-certificate) event will be set to loop through the certificateList and find the first certificate that matches `subjectName` on the electron [`Certificate Object`](https://electronjs.org/docs/api/structures/certificate).
 
 ```js
-const nightmare = Dream({
+const dream = Dream({
   certificateSubjectName: 'tester'
 })
 ```
@@ -273,7 +183,7 @@ Sets the `user` and `password` for accessing a web page using basic authenticati
 Completes any queue operations, disconnect and close the electron process. Note that if you're using promises, `.then()` must be called after `.end()` to run the `.end()` task. Also note that if using an `.end()` callback, the `.end()` call is equivalent to calling `.end()` followed by `.then(fn)`. Consider:
 
 ```js
-nightmare
+dream
   .goto(someUrl)
   .end(() => 'some value')
   //prints "some value"
@@ -387,7 +297,7 @@ Invokes `fn` on the page with `arg1, arg2,...`. All the `args` are optional. On 
 
 ```js
 const selector = 'h1'
-nightmare
+dream
   .evaluate(selector => {
     // now we're executing inside the browser scope.
     return document.querySelector(selector).innerText
@@ -401,7 +311,7 @@ Error-first callbacks are supported as a part of `evaluate()`. If the arguments 
 
 ```js
 const selector = 'h1'
-nightmare
+dream
   .evaluate((selector, done) => {
     // now we're executing inside the browser scope.
     setTimeout(
@@ -420,7 +330,7 @@ Promises are also supported as a part of `evaluate()`. If the return value of th
 
 ```js
 const selector = 'h1';
-nightmare
+dream
   .evaluate((selector) => (
     new Promise((resolve, reject) => {
       setTimeout(() => resolve(document.querySelector(selector).innerText), 2000);
@@ -536,7 +446,7 @@ Queries multiple cookies with the `query` object. If a `query.name` is set, it w
 ```js
 // get all google cookies that are secure
 // and have the path `/query`
-nightmare
+dream
   .goto('http://google.com')
   .cookies.get({
     path: '/query',
@@ -562,7 +472,7 @@ Sets a cookie's `name` and `value`. This is the most basic form, and the url wil
 Sets a `cookie`. If `cookie.url` is not set, it will set the cookie on the current url. Here's an example:
 
 ```js
-nightmare
+dream
   .goto('http://google.com')
   .cookies.set({
     name: 'token',
@@ -587,7 +497,7 @@ Sets multiple cookies at once. `cookies` is an array of `cookie` objects. Take a
 Clears a cookie for the current domain. If `name` is not specified, all cookies for the current domain will be cleared.
 
 ```js
-nightmare
+dream
   .goto('http://google.com')
   .cookies.clear('SomeCookieName')
   // ... other actions ...
@@ -601,7 +511,7 @@ nightmare
 Clears all cookies for all domains.
 
 ```js
-nightmare
+dream
   .goto('http://google.com')
   .cookies.clearAll()
   // ... other actions ...
@@ -619,16 +529,16 @@ If your proxy requires authentication you also need the [authentication](#authen
 The following example not only demonstrates how to use proxies, but you can run it to test if your proxy connection is working:
 
 ```js
-import Dream from 'nightmare';
+import Dream from 'dream';
 
-const proxyNightmare = Dream({
+const proxyDream = Dream({
   switches: {
     'proxy-server': 'my_proxy_server.example.com:8080' // set the proxy server here ...
   },
   show: true
 });
 
-proxyNightmare
+proxyDream
   .authentication('proxyUsername', 'proxyPassword') // ... and authenticate here before `goto`
   .goto('http://www.ipchicken.com')
   .evaluate(() => {
@@ -640,9 +550,9 @@ proxyNightmare
   });
 
 // The rest is just normal Dream to get your local IP
-const regularNightmare = Dream({ show: true });
+const regularDream = Dream({ show: true });
 
-regularNightmare
+regularDream
   .goto('http://www.ipchicken.com')
   .evaluate(() =>
     document.querySelector('b').innerText.replace(/[^\d\.]/g, '');
@@ -660,7 +570,7 @@ By default, Dream uses default native ES6 promises. You can plug in your favorit
 Here's an example:
 
 ```js
-var Dream = require('nightmare')
+var Dream = require('dream')
 
 Dream.Promise = require('bluebird')
 // OR:
@@ -670,18 +580,18 @@ Dream.Promise = require('q').Promise
 You can also specify a custom Promise library per-instance with the `Promise` constructor option like so:
 
 ```js
-var Dream = require('nightmare')
+var Dream = require('dream')
 
-var es6Nightmare = Dream()
-var bluebirdNightmare = Dream({
+var es6Dream = Dream()
+var bluebirdDream = Dream({
   Promise: require('bluebird')
 })
 
-var es6Promise = es6Nightmare
-  .goto('https://github.com/segmentio/nightmare')
+var es6Promise = es6Dream
+  .goto('https://github.com/segmentio/dream')
   .then()
-var bluebirdPromise = bluebirdNightmare
-  .goto('https://github.com/segmentio/nightmare')
+var bluebirdPromise = bluebirdDream
+  .goto('https://github.com/segmentio/dream')
   .then()
 
 es6Promise.isFulfilled() // throws: `TypeError: es6EndPromise.isFulfilled is not a function`
@@ -722,11 +632,11 @@ Dream()
 
 > Remember, this is attached to the static class `Dream`, not the instance.
 
-You'll notice we used an internal function `evaluate_now`. This function is different than `nightmare.evaluate` because it runs it immediately, whereas `nightmare.evaluate` is queued.
+You'll notice we used an internal function `evaluate_now`. This function is different than `dream.evaluate` because it runs it immediately, whereas `dream.evaluate` is queued.
 
 An easy way to remember: when in doubt, use `evaluate`. If you're creating custom actions, use `evaluate_now`. The technical reason is that since our action has already been queued and we're running it now, we shouldn't re-queue the evaluate function.
 
-We can also create custom namespaces. We do this internally for `nightmare.cookies.get` and `nightmare.cookies.set`. These are useful if you have a bundle of actions you want to expose, but it will clutter up the main nightmare object. Here's an example of that:
+We can also create custom namespaces. We do this internally for `dream.cookies.get` and `dream.cookies.set`. These are useful if you have a bundle of actions you want to expose, but it will clutter up the main dream object. Here's an example of that:
 
 ```js
 Dream.action('style', {
@@ -773,11 +683,11 @@ Dream()
 
 ...would clear the browser’s cache before navigating to `example.org`.
 
-See [this document](https://github.com/rosshinkley/nightmare-examples/blob/master/docs/beginner/action.md) for more details on creating custom actions.
+See [this document](https://github.com/rosshinkley/dream-examples/blob/master/docs/beginner/action.md) for more details on creating custom actions.
 
 #### .use(plugin)
 
-`nightmare.use` is useful for reusing a set of tasks on an instance. Check out [nightmare-swiftly](https://github.com/segmentio/nightmare-swiftly) for some examples.
+`dream.use` is useful for reusing a set of tasks on an instance. Check out [dream-swiftly](https://github.com/segmentio/dream-swiftly) for some examples.
 
 #### Custom preload script
 
@@ -787,7 +697,7 @@ can specify a custom preload script. Here's how you do that:
 ```js
 import path from 'path'
 
-const nightmare = Dream({
+const dream = Dream({
   webPreferences: {
     preload: path.resolve('custom-script.js')
     //alternative: preload: "absolute/path/to/custom-script.js"
@@ -798,32 +708,32 @@ const nightmare = Dream({
 The only requirement for that script is that you'll need the following prelude:
 
 ```js
-window.__nightmare = {}
-__nightmare.ipc = require('electron').ipcRenderer
+window.__dream = {}
+__dream.ipc = require('electron').ipcRenderer
 ```
 
-To benefit of all of nightmare's feedback from the browser, you can instead copy the contents of nightmare's [preload script](lib/preload.template.js).
+To benefit of all of dream's feedback from the browser, you can instead copy the contents of dream's [preload script](lib/preload.template.js).
 
-#### Storage Persistence between nightmare instances
+#### Storage Persistence between dream instances
 
-By default nightmare will create an in-memory partition for each instance. This means that any localStorage or cookies or any other form of persistent state will be destroyed when nightmare is ended. If you would like to persist state between instances you can use the [webPreferences.partition](http://electron.atom.io/docs/api/browser-window/#new-browserwindowoptions) api in electron.
+By default dream will create an in-memory partition for each instance. This means that any localStorage or cookies or any other form of persistent state will be destroyed when dream is ended. If you would like to persist state between instances you can use the [webPreferences.partition](http://electron.atom.io/docs/api/browser-window/#new-browserwindowoptions) api in electron.
 
 ```js
-import Dream from 'nightmare';
+import Dream from 'dream';
 
-nightmare = Dream(); // non persistent paritition by default
-yield nightmare
+dream = Dream(); // non persistent paritition by default
+yield dream
   .evaluate(() => {
     window.localStorage.setItem('testing', 'This will not be persisted');
   })
   .end();
 
-nightmare = Dream({
+dream = Dream({
   webPreferences: {
     partition: 'persist: testing'
   }
 });
-yield nightmare
+yield dream
   .evaluate(() => {
     window.localStorage.setItem('testing', 'This is persisted for other instances with the same paritition name');
   })
@@ -839,7 +749,7 @@ If you specify a `null` paritition then it will use the electron default behavio
 Dream is a Node.js module, so you'll need to [have Node.js installed](http://nodejs.org/). Then you just need to `npm install` the module:
 
 ```bash
-$ npm install --save nightmare
+$ npm install --save dream
 ```
 
 #### Execution
@@ -847,11 +757,11 @@ $ npm install --save nightmare
 Dream is a node module that can be used in a Node.js script or module. Here's a simple script to open a web page:
 
 ```js
-import Dream from 'nightmare';
+import Dream from 'dream';
 
-const nightmare = Dream();
+const dream = Dream();
 
-nightmare.goto('http://cnn.com')
+dream.goto('http://cnn.com')
   .evaluate(() => {
     return document.title;
   })
@@ -864,7 +774,7 @@ nightmare.goto('http://cnn.com')
 If you save this as `cnn.js`, you can run it on the command line like this:
 
 ```bash
-npm install --save nightmare
+npm install --save dream
 node cnn.js
 ```
 
@@ -872,81 +782,36 @@ node cnn.js
 
 Dream heavily relies on [Electron](http://electron.atom.io/) for heavy lifting. And Electron in turn relies on several UI-focused dependencies (eg. libgtk+) which are often missing from server distros.
 
-For help running nightmare on your server distro check out [How to run nightmare on Amazon Linux and CentOS](https://gist.github.com/dimkir/f4afde77366ff041b66d2252b45a13db) guide.
+For help running dream on your server distro check out [How to run dream on Amazon Linux and CentOS](https://gist.github.com/dimkir/f4afde77366ff041b66d2252b45a13db) guide.
 
 #### Debugging
 
 There are three good ways to get more information about what's happening inside the headless browser:
 
 1. Use the `DEBUG=*` flag described below.
-2. Pass `{ show: true }` to the [nightmare constructor](#nightmareoptions) to have it create a visible, rendered window where you can watch what is happening.
+2. Pass `{ show: true }` to the [dream constructor](#dreamoptions) to have it create a visible, rendered window where you can watch what is happening.
 3. Listen for [specific events](#onevent-callback).
 
-To run the same file with debugging output, run it like this `DEBUG=nightmare node cnn.js` (on Windows use `set DEBUG=nightmare & node cnn.js`).
+To run the same file with debugging output, run it like this `DEBUG=dream node cnn.js` (on Windows use `set DEBUG=dream & node cnn.js`).
 
 This will print out some additional information about what's going on:
 
 ```bash
-nightmare queueing action "goto" +0ms
-nightmare queueing action "evaluate" +4ms
+dream queueing action "goto" +0ms
+dream queueing action "evaluate" +4ms
 Breaking News, U.S., World, Weather, Entertainment & Video News - CNN.com
 ```
 
 ##### Debug Flags
 
-All nightmare messages
+All dream messages
 
-`DEBUG=nightmare*`
+`DEBUG=dream*`
 
 Only actions
 
-`DEBUG=nightmare:actions*`
+`DEBUG=dream:actions*`
 
 Only logs
 
-`DEBUG=nightmare:log*`
-
-## Additional Resources
-
-* [Ross Hinkley's Dream Examples](https://github.com/rosshinkley/nightmare-examples) is a great resource for setting up nightmare, learning about custom actions, and avoiding common pitfalls.
-
-* [Dream Issues](https://github.com/matthewmueller/nightmare-issues) has a bunch of standalone runnable examples. The script numbers correspond to nightmare issue numbers.
-
-* [Nightmarishly good scraping](https://hackernoon.com/nightmarishly-good-scraping-with-nightmare-js-and-async-await-b7b20a38438f) is a great tutorial by [Ændrew Rininsland](https://twitter.com/@aendrew) on getting up & running with Dream using real-life data.
-
-## Tests
-
-Automated tests for nightmare itself are run using [Mocha](http://mochajs.org/) and Chai, both of which will be installed via `npm install`. To run nightmare's tests, just run `make test`.
-
-When the tests are done, you'll see something like this:
-
-```bash
-make test
-  ․․․․․․․․․․․․․․․․․․
-  18 passing (1m)
-```
-
-Note that if you are using `xvfb`, `make test` will automatically run the tests under an `xvfb-run` wrapper. If you are planning to run the tests headlessly without running `xvfb` first, set the `HEADLESS` environment variable to `0`.
-
-## License (MIT)
-
-```
-WWWWWW||WWWWWW
- W W W||W W W
-      ||
-    ( OO )__________
-     /  |           \
-    /o o|    MIT     \
-    \___/||_||__||_|| *
-         || ||  || ||
-        _||_|| _||_||
-       (__|__|(__|__|
-```
-
-Copyright (c) 2015 Segment.io, Inc. <mailto:friends@segment.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+`DEBUG=dream:log*`
