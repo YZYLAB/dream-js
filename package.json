@@ -1,8 +1,8 @@
 {
   "name": "@yzylab/dream-js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
-  "main": "lib/dream.js",
+  "main": "index.js",
   "scripts": {
     "build": "babel src -d build",
     "test": "make test",
